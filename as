@@ -1,0 +1,15 @@
+insert into students values(52, 'Ashwin', '20000');
+insert into students values(50, 'Prathamesh', '20500');
+insert into students values(54, 'Krishna', '30000');
+select * from students;
+create view stroll as select * from students where Roll_no > 53;
+select * from stroll;
+update students set salary = 20250 where Roll_no = 54;
+select * from stroll;
+select * from students;
+delete from students where Roll_no = 54;
+select * from students;
+create or replace view stroll as select * from students where salary <= 20300;
+select * from stroll;
+select * from students;
+drop view stroll;
