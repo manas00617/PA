@@ -1,0 +1,21 @@
+create table shop (id int,product varchar(90),price int,quantity int);
+insert into shop values(1, 'pen', 10, 30);
+insert into shop values(2, 'book', 100, 10);
+insert into shop values(3, 'file', 20, 25);
+insert into shop values(4, 'pencil', 5, 40);
+select * from shop;
+select id, product, price, quantity,
+price + 10 as includingpackingcharges
+from shop;
+select id, product, price, quantity,
+price - 1 as discountedprice
+from shop;
+select id, product, price, quantity,
+price * quantity as totalcost
+from shop;
+select id, product, price, quantity,
+quantity / 2 as newstock
+from shop;
+select id, product, price, quantity,
+price % 2 as extra
+from shop;
