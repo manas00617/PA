@@ -1,0 +1,93 @@
+#include <GL/glut.h>
+#include <cmath>
+#include <iostream>
+using namespace std;
+float trianglePoints[3][2] = {
+    {0.0f, 0.5f},
+    {-0.5f, -0.5f},
+    {0.5f, -0.5f}
+};
+float scaleX = 1.0f, scaleY = 1.0f;
+float angle = 0.0f;
+bool reflectX = false;
+float translationX = 0.0f;
+void drawTriangle(float points[3][2]) {
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < 3; i++) {
+        glVertex2f(points[i][0], points[i][1]);
+    }
+    glEnd();
+}
+void applyTransformations() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glPushMatrix();
+    glTranslatef(-1.0f, 0.0f, 0.0f);
+    drawTriangle(trianglePoints);
+    glPopMatrix();
+    float transformedTriangle[3][2];
+    for (int i = 0; i < 3; i++) {
+        transformedTriangle[i][0] = trianglePoints[i][0] * scaleX;
+        transformedTriangle[i][1] = trianglePoints[i][1] * scaleY;
+    }
+    float tempX, tempY;
+    float rad = angle * M_PI / 180.0f;
+    for (int i = 0; i < 3; i++) {
+        tempX = transformedTriangle[i][0] * cos(rad) - transformedTriangle[i][1] * sin(rad);
+        tempY = transformedTriangle[i][0] * sin(rad) + transformedTriangle[i][1] * cos(rad);
+        transformedTriangle[i][0] = tempX;
+        transformedTriangle[i][1] = tempY;
+    }
+    if (reflectX) {
+        for (int i = 0; i < 3; i++) {
+            transformedTriangle[i][1] = -transformedTriangle[i][1];
+        }
+    }
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glPushMatrix();
+    glTranslatef(translationX, 0.0f, 0.0f);
+    drawTriangle(transformedTriangle);
+    glPopMatrix();
+    glutSwapBuffers();
+}
+void updateTransformations(unsigned char key, int x, int y) {
+    switch (key) {
+        case 's':
+            scaleX += 0.1f;
+            scaleY += 0.1f;
+            break;
+        case 'r':
+            angle += 5.0f;
+            break;
+        case 't':
+            translationX += 0.2f;
+            if (translationX > 2.0f) {
+                translationX = -2.0f;
+            }
+            break;
+        case 'f':
+            reflectX = !reflectX;
+            break;
+        default:
+            break;
+    }
+    glutPostRedisplay();
+}
+void init() {
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-2.0f, 2.0f, -2.0f, 2.0f);
+    glMatrixMode(GL_MODELVIEW);
+}
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(800, 600);
+    glutCreateWindow("Triangle Transformations");
+    init();
+    glutDisplayFunc(applyTransformations);
+    glutKeyboardFunc(updateTransformations);
+    glutMainLoop();
+    return 0;
+}
